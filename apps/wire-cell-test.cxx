@@ -19,7 +19,8 @@ int main(int argc, char* argv[])
 
     // Get wire geometry
     ifstream geotext(argv[1]);
-    WireCellSst::GeomDataSource gds(geotext);
+    WireCellSst::GeomDataSource gds;
+    gds.load(geotext);
 
     // open data file to make frame data source
     TFile* tfile = TFile::Open(argv[2]);
