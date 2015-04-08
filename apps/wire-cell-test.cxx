@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     TTree* tree = dynamic_cast<TTree*>(tfile->Get("/Event/Sim"));
     WireCellSst::FrameDataSource fds(*tree);
     
-    WireCell::SliceDataSource sds(fds, gds);
+    WireCell::SliceDataSource sds(fds);
     
     // Loop over frames (aka "events")
     size_t nframes = fds.size();
