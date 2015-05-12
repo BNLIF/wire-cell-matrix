@@ -1,0 +1,58 @@
+# an octave script which assumes 5 wires reading out 5x2 grid of cells
+# with two blobs hitting (c2,c3) and (c8,c9) where c3 and c8 are read
+# out by w3 and thus w1 and w5 are not hit.
+
+1;
+
+# a function returning a matrix which will cycle the k'th row to the
+# end of an s X s matrix
+function retval = shift (k,s)
+  m = eye(s)
+  retval = vertcat(m(1:k-1,:),m(k+1:s,:),m(k,:))
+endfunction
+
+# return a function which merges elements i and j in a vector of size s
+function retval = merge (i,j,s)
+  m = eye(s)
+  m(i,j) = 1
+  retval = m
+endfunction
+
+# full adjacency matrix
+A = [1,0,0,0,0,1,0,0,0,0; 
+     0,1,0,0,0,0,1,0,0,0; 
+     0,0,1,0,0,0,0,1,0,0; 
+     0,0,0,1,0,0,0,0,1,0; 
+     0,0,0,0,1,0,0,0,0,1]
+
+# the hit cells
+c = [0;1;2;0;0;0;0;1.1;2.2;0]
+
+# merge 9->8 and 3->2 (need to shift 9 and 3 away)
+c_merged = merge(2,3,10)*merge(8,9,10)
+A_merged = inv(c_merged)
+
+Am = A*A_merged
+cm = c_merged*c
+
+# A matrix to shift unwanted cells, shift highest first
+c_shift = shift(1,10)*shift(3,10)*shift(5,10)*shift(6,10)*shift(9,10)
+# The inverse
+A_shift = inv(c_shift)
+
+# Apply shifts to the merged 
+As = Am*A_shift
+cs = c_shift*cm
+
+# Finally, shift away wire #1
+w_shift = shift(1,5)
+wAs = w_shift*As
+
+# truncate away shifted cells (6) and wires (2)
+wAst = resize(wAs, 3, 4)
+cst = resize(cs,4,1)
+
+A_full = vertcat(horzcat(zeros(3,3),wAst), horzcat(transpose(wAst), zeros(4,4)))
+
+disp ("inverting A_full fails.")
+#inv(A_full)
