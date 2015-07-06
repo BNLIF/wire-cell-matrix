@@ -1,6 +1,8 @@
-#include "WireCellNav/SliceDataSource.h"
 #include "WireCellSst/FrameDataSource.h"
-#include "WireCellSst/GeomDataSource.h"
+#include "WireCellSst/GeomWireReader.h"
+
+#include "WireCellNav/SliceDataSource.h"
+#include "WireCellNav/GeomDataSource.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -18,9 +20,9 @@ int main(int argc, char* argv[])
     }
 
     // Get wire geometry
-    ifstream geotext(argv[1]);
-    WireCellSst::GeomDataSource gds;
-    gds.load(geotext);
+    WireCellSst::GeomWireReader reader(argv[1]);
+    WireCell::GeomDataSource gds;
+    gds.use_wires(reader);
 
     // open data file to make frame data source
     TFile* tfile = TFile::Open(argv[2]);
