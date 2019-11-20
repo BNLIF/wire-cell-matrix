@@ -1,6 +1,6 @@
-#include "WireCellNav/SliceDataSource.h"
-#include "WireCellSst/FrameDataSource.h"
-#include "WireCellSst/GeomDataSource.h"
+#include "WCPNav/SliceDataSource.h"
+#include "WCPSst/FrameDataSource.h"
+#include "WCPSst/GeomDataSource.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -19,15 +19,15 @@ int main(int argc, char* argv[])
 
     // Get wire geometry
     ifstream geotext(argv[1]);
-    WireCellSst::GeomDataSource gds;
+    WCPSst::GeomDataSource gds;
     gds.load(geotext);
 
     // open data file to make frame data source
     TFile* tfile = TFile::Open(argv[2]);
     TTree* tree = dynamic_cast<TTree*>(tfile->Get("/Event/Sim"));
-    WireCellSst::FrameDataSource fds(*tree);
+    WCPSst::FrameDataSource fds(*tree);
     
-    WireCell::SliceDataSource sds(fds);
+    WCP::SliceDataSource sds(fds);
     
     // Loop over frames (aka "events")
     size_t nframes = fds.size();
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 		exit(1); // real code may want to do something less drastic
 	    }
 
-	    const WireCell::Slice& slice = sds.get();
+	    const WCP::Slice& slice = sds.get();
 	}
 
 	time_t now = time(0);
